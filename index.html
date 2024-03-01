@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/primevue/resources/themes/lara-light-blue/theme.css" />
+    <link href="https://unpkg.com/primeicons/primeicons.css" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://unpkg.com/primevue/core/core.min.js"></script>    
+    <script src="https://unpkg.com/primevue/datatable/datatable.min.js"></script>
+    <script src="https://unpkg.com/primevue/column/column.min.js"></script>
+    <script src="https://unpkg.com/primevue/toast/toast.min.js"></script>
+    <script src="https://unpkg.com/primevue/toastservice/toastservice.min.js"></script>
+    <script src="https://unpkg.com/primevue/panel/panel.min.js"></script>    
+    <script src="https://unpkg.com/primevue/confirmdialog/confirmdialog.min.js"></script>
+    <script src="https://unpkg.com/primevue/confirmationservice/confirmationservice.min.js"></script>
+    <script src="https://unpkg.com/primevue/inputmask/inputmask.min.js"></script>
+    <title>Software Manager</title>
+</head>
+
+<body>
+    
+    <div id="app">
+        <p-confirmdialog></p-confirmdialog>
+        <p-toast position="top-right"></p-toast>
+        <p-panel header="Software Manager">
+            Gerencie números de série de softwares. Desenvolvido com VueJS e PrimeVue            
+        </p-panel>
+        <p-button label="Software" class="new-button" @click="showNew = true" icon="pi pi-plus-circle"></p-button>  
+        <p-datatable :value="softwares">
+            <template #header>
+                <div>Softwares</div>
+            </template>
+            <p-column field="nome" header="Nome"></p-column>
+            <p-column field="chave" header="Chave"></p-column>
+            <p-column field="id" header="Editar">
+                <template #body="slotProps">
+                    <p-button icon="pi pi-file-edit" severity="info" rounded raised @click="edit(slotProps.data.id)" />                    
+                </template>
+            </p-column>
+            <p-column field="id" header="Deletar">
+                <template #body="slotProps">
+                    <p-button icon="pi pi-trash" severity="danger" rounded raised @click="deleteRow(slotProps.data.id)" />
+                </template>
+            </p-column>
+            <template #footer> Total de softwares: {{ softwares ? softwares.length : 0 }} </template>
+        </p-datatable>
+        <p-dialog v-model:visible="showNew" modal header="Software" :style="{ width: '25rem' }">
+            <span>Registre as informações do software</span>
+            <div>
+                <p-inputtext id="nome" v-model="nome" autocomplete="off" placeholder="Nome" @change="nome=nome.toUpperCase()" />
+            </div>
+            <div>
+                <p-dropdown v-model="mask" :options="masks" optionLabel="Máscara" placeholder="Selecione a máscara da chave" />
+            </div>
+            <div>
+                <p-inputmask v-model="chave" :mask="mask" @change="chave = chave.toUpperCase()" placeholder="Chave" />
+            </div>
+            <div>
+                <p-button type="button" label="Cancelar" severity="secondary" @click="clearNewFields" icon="pi pi-stop-circle"></p-button>
+                <p-button type="button" label="Salvar" @click="save" icon="pi pi-save"></p-button>
+            </div>          
+            <div>
+                <p-message severity="error" v-if="hasErrors">Preencha todos os campos</p-message>
+            </div>
+        </p-dialog>
+        <p-dialog v-model:visible="showEdit" modal header="Software" :style="{ width: '25rem' }">
+            <span>Edite as informações do software</span>
+            <div>
+                <p-inputtext v-model="nome_edit" autocomplete="off" placeholder="Nome" @change="nome_edit=nome_edit.toUpperCase()" />
+            </div>
+            <div>
+                <p-dropdown v-model="mask" :options="masks" optionLabel="Máscara" placeholder="Selecione a máscara da chave" />
+            </div>
+            <div>
+                <p-inputmask v-model="chave_edit" :mask="mask" @change="chave_edit=chave_edit.toUpperCase()" placeholder="Chave" />
+            </div>            
+            <div>
+                <p-button type="button" label="Cancelar" severity="secondary" @click="clearEditFields" icon="pi pi-stop-circle"></p-button>
+                <p-button type="button" label="Editar" @click="update" icon="pi pi-file-edit"></p-button>
+            </div>
+            <div>
+                <p-message severity="error" v-if="hasEditErrors">Preencha todos os campos</p-message>
+            </div>
+        </p-dialog>
+    </div>
+
+    <script src="app.js"></script>
+
+</body>
+
+</html>
